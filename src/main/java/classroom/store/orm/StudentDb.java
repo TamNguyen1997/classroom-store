@@ -44,3 +44,4 @@ public class StudentDb {
     @UpdateTimestamp
     private LocalDateTime lastModifiedDate;
 }
+

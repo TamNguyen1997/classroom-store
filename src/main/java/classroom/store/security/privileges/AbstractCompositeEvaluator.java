@@ -20,3 +20,4 @@ public abstract class AbstractCompositeEvaluator<T> {
         return true;
     }
 }
+
