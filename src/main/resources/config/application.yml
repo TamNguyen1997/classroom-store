@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/classroom
+    username: postgres
+    password: admin
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          public-key-location: classpath:keys/jwtRS256.key.pub
+  jpa:
+    properties.hibernate:
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+      physical_naming_strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+    hibernate.show-sql: true
+
+  kafka:
+    bootstrap-servers: http://localhost:9092
+    consumer.group-id: classroom
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+
+server.port: 8083
+management.server.port: 8083
