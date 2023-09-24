@@ -1,6 +1,7 @@
 package classroom.store.controller;
 
 import classroom.store.exception.ForbiddenException;
+import classroom.store.model.command.teacher.Teacher;
 import classroom.store.model.command.teacher.TeacherCreateCommand;
 import classroom.store.model.command.teacher.TeacherUpdateCommand;
 import classroom.store.orm.ClassRoomDb;
@@ -48,29 +49,27 @@ public class TeacherController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<TeacherDb> fetch(@PathVariable("id") UUID id) {
+    public ResponseEntity<Teacher> fetch(@PathVariable("id") UUID id) {
         TeacherDb teacherDb = teacherPersistentService.fetch(id);
-        return ResponseEntity.ok(teacherDb);
+        return ResponseEntity.ok(modelMapper.map(teacherDb, Teacher.class));
     }
 
     @PostMapping
-    public ResponseEntity<TeacherDb> create(@RequestBody @Valid TeacherCreateCommand teacherCreateCommand) {
+    public ResponseEntity<Teacher> create(@RequestBody @Valid TeacherCreateCommand teacherCreateCommand) {
         TeacherDb teacherDb = modelMapper.map(teacherCreateCommand, TeacherDb.class);
         ClassRoomDb classRoomDb = classroomPersistentService.fetch(teacherCreateCommand.getClassroomId());
         teacherDb.setClassRoomDb(classRoomDb);
-        return ResponseEntity.status(HttpStatus.CREATED).body(teacherPersistentService.create(teacherDb));
+        return ResponseEntity.status(HttpStatus.CREATED).body(modelMapper.map(teacherPersistentService.create(teacherDb), Teacher.class));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TeacherDb> update(@PathVariable("id") UUID id, @RequestBody @Valid TeacherUpdateCommand updateCommand) {
+    public ResponseEntity<Teacher> update(@PathVariable("id") UUID id, @RequestBody @Valid TeacherUpdateCommand updateCommand) {
         TeacherDb teacherDb = teacherPersistentService.fetch(id);
         if (permissionEvaluator.hasAccess(teacherDb)) {
             throw new ForbiddenException("Forbidden - Don't have access to teacher " + id);
         }
         modelMapper.map(updateCommand, teacherDb);
-        ClassRoomDb classRoomDb = classroomPersistentService.fetch(updateCommand.getClassroomId());
-        teacherDb.setClassRoomDb(classRoomDb);
-        return ResponseEntity.status(HttpStatus.CREATED).body(teacherPersistentService.update(teacherDb));
+        return ResponseEntity.status(HttpStatus.CREATED).body(modelMapper.map(teacherPersistentService.update(teacherDb), Teacher.class));
     }
 
     @DeleteMapping(value = "/{id}")

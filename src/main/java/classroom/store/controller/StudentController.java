@@ -14,6 +14,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +29,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping(value = "/students")
 @PreAuthorize(Role.PERMIT_STUDENT)
+@Transactional
 public class StudentController {
 
     private final StudentPersistentService studentPersistentService;
@@ -69,8 +71,6 @@ public class StudentController {
             throw new ForbiddenException("Forbidden - Don't have access to student " + id);
         }
         modelMapper.map(updateCommand, studentDb);
-        ClassRoomDb classRoomDb = classroomPersistentService.fetch(updateCommand.getClassroomId());
-        studentDb.setClassRoomDb(classRoomDb);
         return ResponseEntity.status(HttpStatus.CREATED).body(studentPersistentService.update(studentDb));
     }
 
