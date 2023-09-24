@@ -13,11 +13,11 @@ public abstract class AbstractCompositeEvaluator<T> {
     public boolean hasAccess(T target) {
         for(PermissionEvaluator<T> evaluator : permissionEvaluators) {
             if(evaluator.hasPermission(target)) {
-                return false;
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 }
 

@@ -1,5 +1,6 @@
 package classroom.store.controller;
 
+import classroom.store.exception.ForbiddenException;
 import classroom.store.model.command.teacher.TeacherCreateCommand;
 import classroom.store.model.command.teacher.TeacherUpdateCommand;
 import classroom.store.orm.ClassRoomDb;
@@ -63,7 +64,9 @@ public class TeacherController {
     @PutMapping("/{id}")
     public ResponseEntity<TeacherDb> update(@PathVariable("id") UUID id, @RequestBody @Valid TeacherUpdateCommand updateCommand) {
         TeacherDb teacherDb = teacherPersistentService.fetch(id);
-        permissionEvaluator.hasAccess(teacherDb);
+        if (permissionEvaluator.hasAccess(teacherDb)) {
+            throw new ForbiddenException("Forbidden - Don't have access to teacher " + id);
+        }
         modelMapper.map(updateCommand, teacherDb);
         ClassRoomDb classRoomDb = classroomPersistentService.fetch(updateCommand.getClassroomId());
         teacherDb.setClassRoomDb(classRoomDb);
@@ -73,7 +76,9 @@ public class TeacherController {
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") UUID id) {
         TeacherDb teacherDb = teacherPersistentService.fetch(id);
-        permissionEvaluator.hasAccess(teacherDb);
+        if (permissionEvaluator.hasAccess(teacherDb)) {
+            throw new ForbiddenException("Forbidden - Don't have access to teacher " + id);
+        }
         teacherPersistentService.delete(teacherDb);
         return ResponseEntity.noContent().build();
     }

@@ -1,0 +1,8 @@
+test-container:
+  postgresql:
+    port: 5430
+    host: localhost
+    username: postgres
+    password: postgres
+    database-name: classroom
+    jdbc-url: jdbc:postgresql://localhost:5430/classroom
